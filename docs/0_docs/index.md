@@ -65,8 +65,48 @@ Vitepressは、vuepressを改善したものなので、vuepressの説明から�
    
     |項目|説明|
     |---|---|
+    |`public`|OGPやmarkdown内で使用する画像を置いておく|
     |`config.js`|Viteの設定情報を書き込むファイル。<br>headやsidebar、navigationの情報もここで記載すると自動で作成される。|
     |`index.md`|トップページとなるファイル。<br>他のページとは違い、markdownの先頭に、yaml形式のトップページ専用のデータを挿入することができる。|
+
+    ::: tip
+      **public**についてはさらに**article(blog)、site、writers**ディレクトリを作成するとわかりやすくなるかもしれません。
+    :::
+
+7. `docs/index.md`に以下を記載
+   ```md
+   ---
+   home: true
+
+   heroImage: /site/logo.png
+   heroText: Welcome to VitePress
+   tagline: VitePressのサンプルページ
+   actionText: Get Start
+   actionLink: /0_docs/
+   features:
+   - title: 🟩 機能説明
+      details: 詳細
+   - title: 🟦 機能説明
+      details: 詳細
+   - title: 🟧 機能説明
+      details: 詳細
+   - title: 💻 機能説明
+      details: 詳細
+   - title: 🛠 機能説明
+      details: 詳細
+   - title: 📍 機能説明
+      details: 詳細
+   footer: MIT Licensed | Copyright ©︎  2021
+   ---
+   ```
+
+8. こちらの画像を`docs/public/site/`に保存してください
+
+   ![vitepress](/site/logo.png)
+
+9.  `yarn docs:build or npm run build`を実行し、下記の画面が出れば成功
+    
+    ![top-screen](/article/top-init.png)
 
 
 ## カスタマイズ
@@ -80,11 +120,8 @@ Vitepressは、vuepressを改善したものなので、vuepressの説明から�
 
     |項目|説明|
     |---|---|
-    |`public`|OGPやmarkdown内で使用する画像を置いておく|
     |`constants`|編集者一覧などまとめて管理したいものを定義するファイルを置いておく|
     |`components`|markdown内で使用したいコンポーネントを置いておく|
-
-    **public**についてはさらに**article(blog)、site、writers**ディレクトリを作成するとわかりやすくなるかもしれません。
 
 ### config.jsの設定
 
