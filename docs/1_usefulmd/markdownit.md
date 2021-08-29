@@ -81,7 +81,8 @@ module.exports = containerMdExtend;
 - [ ] タスク1
 - [x] タスク2
 
-```markdown
+```md
 - [ ] タスク1
 - [x] タスク2
 ```
+
