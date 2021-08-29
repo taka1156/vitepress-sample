@@ -2,7 +2,7 @@ const containerMdExtend = require('./plugins/md/index.js');
 
 module.exports = {
   lang: 'ja',
-  title: 'Welcome VitePress',
+  title: 'Welcome to VitePress',
   description: 'VitePressのサンプルページ',
   head: [
     [
@@ -43,7 +43,7 @@ module.exports = {
         items: [
           {
             text: 'VitePress',
-            link: 'https://vitepress.vuejs.org//',
+            link: 'https://vitepress.vuejs.org',
           },
           {
             text: 'Vite',

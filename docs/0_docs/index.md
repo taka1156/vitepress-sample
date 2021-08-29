@@ -86,18 +86,338 @@ Vitepressは、vuepressを改善したものなので、vuepressの説明から�
 
     **public**についてはさらに**article(blog)、site、writers**ディレクトリを作成するとわかりやすくなるかもしれません。
 
-### ナビゲーション
+### config.jsの設定
 
-### サイドバー
+#### meta系
+```js
+module.exports = {
+   lang: 'ja',
+   title: 'Welcome to VitePress',
+   description: 'VitePressのサンプルページ',
+   head: [
+      [
+         'meta',
+         { property: 'og:image', content: '/vitepress-sample/site/logo.png' },
+      ],
+      [
+         'link',
+         {
+            rel: 'icon',
+            type: 'image/png',
+            href: '/vitepress-sample/site/logo.png',
+         },
+      ],
+   ]
+   //...
+}
+```
+
+#### テーマ
+```js
+module.exports = {
+   //...
+   themeConfig: {
+      repo: 'taka1156/vitepress-sample',
+      logo: '/site/logo-min.png',
+      editLinks: true,
+      editLinkText: 'このページをgithubで編集',
+      lastUpdate: '最終更新',
+      docsDir: 'docs',
+      docsBranch: 'master',
+      // nav, sidebarの定義もこちらですが長いので別枠記載
+   }
+   //...
+}
+
+```
+
+#### ナビゲーション
+```js
+module.exports = {
+   //...
+   themeConfig: {
+      nav: [
+         {
+         text: 'NAVI',
+         items: [
+            { text: '0. はじめに', link: '/0_docs/' },
+            { text: '1. デフォルトmarkdown構文', link: '/1_usefulmd/' },
+            { text: '2. markdown-it構文', link: '/1_usefulmd/markdownit' },
+            { text: '編集者、管理者一覧', link: '/0_docs/writers' },
+         ],
+         },
+         {
+         text: '公式リンク',
+         items: [
+            {
+               text: 'VitePress',
+               link: 'https://vitepress.vuejs.org'
+            },
+            {
+               text: 'Vite',
+               link: 'https://vitejs.dev/'
+            },
+            {
+               text: 'Vue',
+               link: 'https://v3.ja.vuejs.org/'
+            },
+            {
+               text: 'github pages',
+               link: 'https://docs.github.com/ja/pages/getting-started-with-github-pages/about-github-pages'
+            },
+         ],
+         },
+         {
+         text: 'コミュニティ',
+         items: [
+            {
+               text: 'vuejs-jp',
+               link: 'https://vuejs-jp.org/'
+            },
+         ],
+         },
+      ]
+   }
+   //...
+}
+```
+
+#### サイドバー
+```js
+module.exports = {
+   //...
+   themeConfig: {
+      '/': [
+         { text: '0. はじめに', link: '/0_docs/' },
+         { text: '1. デフォルトmarkdown構文', link: '/1_usefulmd/' },
+         { text: '2. markdown-it構文', link: '/1_usefulmd/markdownit' },
+         { text: '編集者、管理者一覧', link: '/0_docs/writers' },
+      ]
+   }
+   //...
+}
+```
 
 ### markdown構文の拡張
 
 内部のmarkdown処理には、[markdown-it](https://github.com/markdown-it/markdown-it)が使われているため、<br>
 その周辺モジュールであれば、大抵のものは使えると思います。
 
-今回は例として、[markdown-it-container](https://github.com/markdown-it/markdown-it-container)を使用します
+今回は例として、[markdown-it-container](https://github.com/markdown-it/markdown-it-container)を使用します。
+
+1. `docs/.vitepress/plugins/md/index.js`を作成し、下記を記載
+
+      ```js
+      const containerMdExtend = (md) => ({
+      validate: function (params) {
+         return params.trim().match(/^spoiler\s+(.*)$/);
+      },
+
+      render: function (tokens, idx) {
+         var m = tokens[idx].info.trim().match(/^spoiler\s+(.*)$/);
+
+         if (tokens[idx].nesting === 1) {
+            // opening tag
+            return '<details><summary>' + md.utils.escapeHtml(m[1]) + '</summary>\n';
+         } else {
+            // closing tag
+            return '</details>\n';
+         }
+      },
+      });
+
+      module.exports = containerMdExtend;
+      ```
+
+2. config.jsに以下を記載
+
+   ```js
+   // 拡張した処理を読み込み
+   const containerMdExtend = require('./plugins/md/index.js');
+
+   module.exports = {
+      //...
+      markdown: {
+         lineNumbers: true,
+         config: (md) => {
+            md.use(
+               require('markdown-it-container'),
+               'spoiler',
+               containerMdExtend(md)
+            );
+         },
+      }
+   }
+   ```
+
+3. markdown内で以下の構文が使えたら成功です。
+
+   ::: spoiler アコーディオン見出し
+      隠したいテキスト
+   :::
+
+   ```md
+   ::: spoiler アコーディオン見出し
+      隠したいテキスト
+   :::
+   ```
+
+::: tip
+   markdown-it-containerはデフォルトで組み込まれているため、インストールは必要ありません。
+:::
 
 ### vueコンポーネントの埋め込み
+
+サンプルとして編集者一覧を表示するコンポーネントを作成します
+
+1. `docs/.vitepress/components/WitersBox.vue`を作成し、下記を記載
+
+   ```vue
+   <script setup>
+   import { WRITERS } from '../../constants/index.js';
+
+   const writers = WRITERS;
+
+   const imgPath = (imgUrl) => {
+      if (process.env.NODE_ENV !== 'production') {
+         return imgUrl;
+      } else {
+         return `/fe-beginner-doc${imgUrl}`;
+      }
+   };
+   </script>
+
+   <template>
+   <div>
+      <div v-for="writer in writers" :key="writer.name" class="writers-box">
+         <p>{{ writer.writerName }}</p>
+         <div class="profile-box">
+         <img
+            :src="imgPath(writer.imgIcon)"
+            alt="プロフィール画像"
+            class="profile-box__img"
+         />
+         <div class="sns-icons">
+            <a :href="writer.github" class="sns-icons__icon">
+               <img src="/site/github.png" alt="github" />
+            </a>
+            <a :href="writer.twitter" class="sns-icons__icon">
+               <img src="/site/twitter.png" alt="twitter" />
+            </a>
+         </div>
+         </div>
+      </div>
+   </div>
+   </template>
+
+   <style scoped>
+   .profile-box {
+      display: flex;
+      justify-content: center;
+      width: 90%;
+      height: 150px;
+      padding: 0;
+      margin: 0 auto;
+      margin-left: 0;
+      border: 0.5px solid gray;
+      border-radius: 5px;
+   }
+
+   .profile-box__img {
+      display: block;
+      width: 30%;
+      height: 80%;
+      padding: 0;
+      margin: auto;
+   }
+
+   .sns-icons {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      width: 65%;
+      padding: 10px auto;
+      border-left: 1px solid gray;
+   }
+
+   .sns-icons__icon {
+      height: 50px;
+      width: 50px;
+   }
+
+   @media screen and (min-width: 768px) {
+      .profile-box {
+         width: 60%;
+      }
+      .profile-box__img {
+         width: 30%;
+      }
+   }
+   </style>
+   ```
+
+2. `docs/constants/index.js`を作成し、下記を記載
+
+   ```js
+   const WRITERS = [
+      {
+         writerName: 'taka1156',
+         imgIcon: '/writers/taka1156.png',
+         github: 'https://github.com/taka1156',
+         twitter: 'https://twitter.com/taka_1156',
+      },
+      {
+         writerName: 'coming soon...',
+         imgIcon: '/writers/noimg.png',
+         github: '#',
+         twitter: '#',
+      },
+      {
+         writerName: 'coming soon...',
+         imgIcon: '/writers/noimg.png',
+         github: '#',
+         twitter: '#',
+      },
+      {
+         writerName: 'coming soon...',
+         imgIcon: '/writers/noimg.png',
+         github: '#',
+         twitter: '#',
+      },
+   ];
+   
+   export { WRITERS };
+   ```
+
+
+
+3. `docs/.vitepress/theme/index.js`に下記を記載
+
+   ```js
+   import ThemeDefault from 'vitepress/dist/client/theme-default';
+   import WritersBox from '../components/WritersBox.vue';
+   import NotFound from '../components/NotFound.vue'
+
+   export default {
+   ...ThemeDefault,
+      enhanceApp({ app }) {
+         app.component('writers-box', WritersBox);
+         app.component('NotFound', NotFound);
+      }
+   };
+   ```
+
+4. このような表示ができたら成功
+   
+   ![writers-boxコンポーネント](/article/writers-box-comp.png)
+
+   ```md
+   # 編集者、管理者一覧
+
+   **Thank you for your cooperation**
+   
+   <writers-box />
+   ```
 
 ## デプロイ(github actions)
 
@@ -110,46 +430,45 @@ github actionsを利用して、自動デプロイを行ってみましょう。
    `tocuh .github/workflows/main.yaml`
 
 3. yarmlの中身を以下のようにする<br>
-   ``` yaml
-   name: gh-page deploy
-   
-   # masterにpushした時
-    on:
-     push:
-        branches:
-        - master
+``` yaml
+name: gh-page deploy
 
-    # 動かす環境や走らせて欲しいコマンドなど
-    jobs:
-     build-deploy:
-      runs-on: ubuntu-18.04
-        steps:
-        - uses: actions/checkout@v2
+# masterにpushした時
+on:
+push:
+   branches:
+   - master
 
-        - name: setup node
-          uses: actions/setup-node@v1
-          with:
-            node-version: '14.x'
+   # 動かす環境や走らせて欲しいコマンドなど
+   jobs:
+   build-deploy:
+   runs-on: ubuntu-18.04
+      steps:
+      - uses: actions/checkout@v2
 
-        - name: Cache dependencies
-          uses: actions/cache@v2
-          with:
-            path: ~/.cache/yarn
-            key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
-            restore-keys: |
-                ${{ runner.os }}-node-
+      - name: setup node
+         uses: actions/setup-node@v1
+         with:
+         node-version: '14.x'
 
-        - name: install
-          if: steps.cache.outputs.cache-hit != 'true'
-          run: yarn install
+      - name: Cache dependencies
+         uses: actions/cache@v2
+         with:
+         path: ~/.cache/yarn
+         key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
+         restore-keys: |
+               ${{ runner.os }}-node-
 
-        - name: build
-          run: yarn docs:build
+      - name: install
+         if: steps.cache.outputs.cache-hit != 'true'
+         run: yarn install
 
-        - name: deploy
-          uses: peaceiris/actions-gh-pages@v3
-          with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_dir: ./dist
+      - name: build
+         run: yarn docs:build
 
-   ```
+      - name: deploy
+         uses: peaceiris/actions-gh-pages@v3
+         with:
+         github_token: ${{ secrets.GITHUB_TOKEN }}
+         publish_dir: ./dist
+```

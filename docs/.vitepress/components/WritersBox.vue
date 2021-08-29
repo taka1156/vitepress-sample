@@ -1,3 +1,17 @@
+<script setup>
+  import { WRITERS } from '../../constants/index.js';
+
+  const writers = WRITERS;
+
+  const imgPath = (imgUrl) => {
+    if (process.env.NODE_ENV !== 'production') {
+      return imgUrl;
+    } else {
+      return `/fe-beginner-doc${imgUrl}`;
+    }
+  };
+</script>
+
 <template>
   <div>
     <div v-for="writer in writers" :key="writer.name" class="writers-box">
@@ -20,28 +34,6 @@
     </div>
   </div>
 </template>
-
-<script>
-  import { WRITERS } from '../../constants/index.js';
-
-  export default {
-    name: 'WritersBox',
-    data() {
-      return {
-        writers: WRITERS,
-      };
-    },
-    methods: {
-      imgPath(imgUrl) {
-        if (process.env.NODE_ENV !== 'production') {
-          return imgUrl;
-        } else {
-          return `/fe-beginner-doc${imgUrl}`;
-        }
-      },
-    },
-  };
-</script>
 
 <style scoped>
   .profile-box {

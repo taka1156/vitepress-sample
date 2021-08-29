@@ -186,7 +186,7 @@ greeting('Hello World')
 
 - vue
 
-```html{2,7-16}
+```vue{2,7-16}
 <template>
   <div id="app">
     <p>{{ msg }}</p>
