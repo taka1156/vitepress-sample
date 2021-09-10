@@ -1,1 +1,0 @@
-import{r as t,o as a,c as e,a as r}from"./app.968d0ad6.js";const s='{"title":"","description":"","frontmatter":{"sidebar":false,"editLink":false},"relativePath":"404.md","lastUpdated":1630273273150}',d={};d.render=function(s,d,n,o,i,l){const f=t("NotFound");return a(),e("div",null,[r(f)])};export{s as __pageData,d as default};
