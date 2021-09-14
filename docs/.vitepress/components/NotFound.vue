@@ -19,7 +19,7 @@
 
       <p class="description">
         エラーが発生しました。<br />
-        <a class="error-link" href="/">ホームに戻る</a>
+        <a class="error-link" href="/vitepress-sample/">ホームに戻る</a>
       </p>
     </div>
   </div>
