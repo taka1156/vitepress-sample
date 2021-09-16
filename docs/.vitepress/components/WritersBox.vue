@@ -1,15 +1,9 @@
 <script setup>
+  import { withBase } from 'vitepress';
   import { WRITERS } from '../../constants/index.js';
 
   const writers = WRITERS;
 
-  const imgPath = (imgUrl) => {
-    if (process.env.NODE_ENV !== 'production') {
-      return imgUrl;
-    } else {
-      return `/fe-beginner-doc${imgUrl}`;
-    }
-  };
 </script>
 
 <template>
@@ -18,7 +12,7 @@
       <p>{{ writer.writerName }}</p>
       <div class="profile-box">
         <img
-          :src="imgPath(writer.imgIcon)"
+          :src="withBase(writer.imgIcon)"
           alt="プロフィール画像"
           class="profile-box__img"
         />
