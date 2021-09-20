@@ -24,7 +24,6 @@ module.exports = {
     logo: '/site/logo-min.png',
     editLinks: true,
     editLinkText: 'このページをgithubで編集',
-    lastUpdated: '最終更新',
     docsDir: 'docs',
     docsBranch: 'master',
 
