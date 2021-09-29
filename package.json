@@ -8,10 +8,9 @@
     "docs:serve": "vitepress serve docs"
   },
   "devDependencies": {
+    "markdown-it-container": "^3.0.0",
     "markdown-it-task-lists": "^2.1.1",
     "vitepress": "^0.19.2"
   },
-  "dependencies": {
-    "markdown-it-container": "^3.0.0"
-  }
+  "dependencies": {}
 }
