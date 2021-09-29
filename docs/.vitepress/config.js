@@ -18,7 +18,7 @@ module.exports = {
       },
     ],
   ],
-  base: '/vitepress-sample/',
+  // base: '/vitepress-sample/',
   themeConfig: {
     repo: 'taka1156/vitepress-sample',
     logo: '/site/logo-min.png',
