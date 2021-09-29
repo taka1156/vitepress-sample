@@ -11,5 +11,7 @@
     "markdown-it-task-lists": "^2.1.1",
     "vitepress": "^0.19.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "markdown-it-container": "^3.0.0"
+  }
 }
